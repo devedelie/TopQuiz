@@ -16,13 +16,15 @@ import com.ponroy.florian.topquiz.model.User;
 
 import static java.lang.System.out;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView mGreetingText;
     private EditText mNameInput;
     private Button mPlayButton;
+    private Button mBestScoreButton;
     private User mUser;
     public static final int GAME_ACTIVITY_REQUEST_CODE = 42;
+    public static final int BEST_SCORE_REQUEST_CODE = 62;
     private SharedPreferences mPreferences;
 
     public static final String PREF_KEY_SCORE = "PREF_KEY_SCORE";
@@ -42,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
         mGreetingText = (TextView) findViewById(R.id.activity_main_greeting_txt);
         mNameInput = (EditText) findViewById(R.id.activity_main_name_input);
         mPlayButton = (Button) findViewById(R.id.activity_main_play_btn);
+        mBestScoreButton = (Button) findViewById(R.id.activity_main_best_score_btn);
 
         mPlayButton.setEnabled(false);
+        mBestScoreButton.setEnabled(true);
 
         greetUser();
 
@@ -64,20 +68,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        mPlayButton.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+//                String firstname = mNameInput.getText().toString();
+//                mUser.setFirstname(firstname);
+//
+//                mPreferences.edit().putString(PREF_KEY_FIRSTNAME, mUser.getFirstname()).apply();
+////
+////                // User clicked the button
+////                Intent gameActivityIntent = new Intent(MainActivity.this, GameActivity.class);
+////                startActivityForResult(gameActivityIntent, GAME_ACTIVITY_REQUEST_CODE);
+////            }
+////        });
+
+        // Use the tag property to 'name' the buttons
+        mPlayButton.setTag(0);
+        mBestScoreButton.setTag(1);
+
+        mPlayButton.setOnClickListener(this);
+        mBestScoreButton.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int buttonNumber = (int) view.getTag();
+        switch (buttonNumber){
+            case 1:
                 String firstname = mNameInput.getText().toString();
                 mUser.setFirstname(firstname);
 
                 mPreferences.edit().putString(PREF_KEY_FIRSTNAME, mUser.getFirstname()).apply();
-
                 // User clicked the button
                 Intent gameActivityIntent = new Intent(MainActivity.this, GameActivity.class);
                 startActivityForResult(gameActivityIntent, GAME_ACTIVITY_REQUEST_CODE);
-            }
-        });
+                return;
+            case 2:
+
+                // User clicked the button
+                Intent bestScoreIntent = new Intent(MainActivity.this, BestScoreReview.class);
+                startActivityForResult(bestScoreIntent, BEST_SCORE_REQUEST_CODE);
+
+        }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -141,4 +175,6 @@ public class MainActivity extends AppCompatActivity {
 
         out.println("MainActivity::onDestroy()");
     }
+
+
 }
